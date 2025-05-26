@@ -1,4 +1,5 @@
-import "./styles/index.css";
+import "../styles/index.css";
+import { initialCards } from "./cards";
 function deleteCard(evt) {
   evt.target.closest(".card").remove();
 }
