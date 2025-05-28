@@ -1,6 +1,7 @@
 import "../styles/index.css";
 import { initialCards } from "./cards";
 import { openModal, closeModal } from "./modal";
+import { handleFormSubmit } from "./form";
 
 function deleteCard(evt) {
   evt.target.closest(".card").remove();
@@ -26,12 +27,14 @@ initialCards.forEach((element) => {
 document.querySelectorAll(".popup__close").forEach((button) => {
   button.addEventListener("click", () => {
     const popup = button.closest(".popup");
+    popup.querySelector("form").reset();
     closeModal(popup);
   });
 });
 
 const editButton = document.querySelector(".profile__edit-button");
 editButton.addEventListener("click", () => {
+  handleFormSubmit();
   openModal(document.querySelector(".popup_type_edit"));
 });
 
