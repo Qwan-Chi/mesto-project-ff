@@ -1,44 +1,85 @@
 import "../styles/index.css";
-import { initialCards } from "./cards";
 import { openModal, closeModal } from "./modal";
-import { handleFormSubmit } from "./form";
+import { handleLikeClick, createCard, initialCards, deleteCard } from "./cards";
 
-function deleteCard(evt) {
-  evt.target.closest(".card").remove();
+const profileForm = document.forms["edit-profile"];
+const nameInput = profileForm.elements.name;
+const description = profileForm.elements.description;
+const cardForm = document.forms["new-place"];
+const cardNameInput = cardForm.elements["place-name"];
+const cardLinkInput = cardForm.elements.link;
+const profileTitle = document.querySelector(".profile__title");
+const profileDescription = document.querySelector(".profile__description");
+
+function handleProfileFormSubmit() {
+  nameInput.value = profileTitle.textContent;
+  description.value = profileDescription.textContent;
 }
 
-function createCard(card, deleteCallback) {
-  const cardElement = document
-    .querySelector("#card-template")
-    .content.cloneNode(true);
-  cardElement.querySelector(".card__image").src = card.link;
-  cardElement.querySelector(".card__title").textContent = card.name;
-  cardElement
-    .querySelector(".card__delete-button")
-    .addEventListener("click", deleteCallback);
-  return cardElement;
+function handleImageZoom(evt) {
+  const imagePopup = document.querySelector(".popup_type_image");
+  const card = evt.target.closest(".card");
+  imagePopup.querySelector(".popup__image").src =
+    card.querySelector(".card__image").src;
+  imagePopup.querySelector(".popup__caption").textContent =
+    card.querySelector(".card__title").textContent;
+  openModal(imagePopup);
 }
 
-const list = document.querySelector(".places__list");
-initialCards.forEach((element) => {
-  list.append(createCard(element, deleteCard));
+profileForm.addEventListener("submit", (evt) => {
+  evt.preventDefault();
+
+  profileTitle.textContent = nameInput.value;
+  profileDescription.textContent = description.value;
+
+  closeModal(document.querySelector(".popup_type_edit"));
+});
+
+cardForm.addEventListener("submit", (evt) => {
+  evt.preventDefault();
+
+  const newCard = {
+    name: cardNameInput.value,
+    link: cardLinkInput.value,
+  };
+
+  document
+    .querySelector(".places__list")
+    .prepend(createCard(newCard, deleteCard, handleLikeClick, handleImageZoom));
+  cardForm.reset();
+  closeModal(document.querySelector(".popup_type_new-card"));
 });
 
 document.querySelectorAll(".popup__close").forEach((button) => {
   button.addEventListener("click", () => {
     const popup = button.closest(".popup");
-    popup.querySelector("form").reset();
     closeModal(popup);
   });
 });
 
-const editButton = document.querySelector(".profile__edit-button");
-editButton.addEventListener("click", () => {
-  handleFormSubmit();
-  openModal(document.querySelector(".popup_type_edit"));
+document
+  .querySelector(".profile__edit-button")
+  .addEventListener("click", () => {
+    handleProfileFormSubmit();
+    openModal(document.querySelector(".popup_type_edit"));
+  });
+
+document.querySelector(".profile__add-button").addEventListener("click", () => {
+  openModal(document.querySelector(".popup_type_new-card"));
 });
 
-const addButton = document.querySelector(".profile__add-button");
-addButton.addEventListener("click", () => {
-  openModal(document.querySelector(".popup_type_new-card"));
+profileForm.addEventListener("submit", (evt) => {
+  evt.preventDefault();
+
+  document.querySelector(".profile__title").textContent = nameInput.value;
+  document.querySelector(".profile__description").textContent =
+    description.value;
+
+  closeModal(document.querySelector(".popup_type_edit"));
+});
+
+initialCards.forEach((element) => {
+  document
+    .querySelector(".places__list")
+    .append(createCard(element, deleteCard, handleLikeClick, handleImageZoom));
 });
