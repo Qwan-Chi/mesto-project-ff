@@ -1,6 +1,7 @@
 import "../styles/index.css";
 import { openModal, closeModal } from "./modal";
-import { handleLikeClick, createCard, initialCards, deleteCard } from "./cards";
+import { handleLikeClick, createCard, deleteCard } from "./card";
+import { initialCards } from "./cards";
 
 const profileForm = document.forms["edit-profile"];
 const nameInput = profileForm.elements.name;
@@ -10,19 +11,20 @@ const cardNameInput = cardForm.elements["place-name"];
 const cardLinkInput = cardForm.elements.link;
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
+const imagePopup = document.querySelector(".popup_type_image");
+const popupEdit = document.querySelector(".popup_type_edit");
+const placesList = document.querySelector(".places__list");
+const popupNewCard = document.querySelector(".popup_type_new-card");
 
-function handleProfileFormSubmit() {
+function fillProfileForm() {
   nameInput.value = profileTitle.textContent;
   description.value = profileDescription.textContent;
 }
 
 function handleImageZoom(evt) {
-  const imagePopup = document.querySelector(".popup_type_image");
-  const card = evt.target.closest(".card");
-  imagePopup.querySelector(".popup__image").src =
-    card.querySelector(".card__image").src;
-  imagePopup.querySelector(".popup__caption").textContent =
-    card.querySelector(".card__title").textContent;
+  const image = evt.target;
+  imagePopup.querySelector(".popup__image").src = image.src;
+  imagePopup.querySelector(".popup__caption").textContent = image.alt;
   openModal(imagePopup);
 }
 
@@ -32,7 +34,7 @@ profileForm.addEventListener("submit", (evt) => {
   profileTitle.textContent = nameInput.value;
   profileDescription.textContent = description.value;
 
-  closeModal(document.querySelector(".popup_type_edit"));
+  closeModal(popupEdit);
 });
 
 cardForm.addEventListener("submit", (evt) => {
@@ -43,11 +45,11 @@ cardForm.addEventListener("submit", (evt) => {
     link: cardLinkInput.value,
   };
 
-  document
-    .querySelector(".places__list")
-    .prepend(createCard(newCard, deleteCard, handleLikeClick, handleImageZoom));
+  placesList.prepend(
+    createCard(newCard, deleteCard, handleLikeClick, handleImageZoom)
+  );
   cardForm.reset();
-  closeModal(document.querySelector(".popup_type_new-card"));
+  closeModal(popupNewCard);
 });
 
 document.querySelectorAll(".popup__close").forEach((button) => {
@@ -60,22 +62,21 @@ document.querySelectorAll(".popup__close").forEach((button) => {
 document
   .querySelector(".profile__edit-button")
   .addEventListener("click", () => {
-    handleProfileFormSubmit();
-    openModal(document.querySelector(".popup_type_edit"));
+    fillProfileForm();
+    openModal(popupEdit);
   });
 
 document.querySelector(".profile__add-button").addEventListener("click", () => {
-  openModal(document.querySelector(".popup_type_new-card"));
+  openModal(popupNewCard);
 });
 
 profileForm.addEventListener("submit", (evt) => {
   evt.preventDefault();
 
-  document.querySelector(".profile__title").textContent = nameInput.value;
-  document.querySelector(".profile__description").textContent =
-    description.value;
+  profileTitle.textContent = nameInput.value;
+  profileDescription.textContent = description.value;
 
-  closeModal(document.querySelector(".popup_type_edit"));
+  closeModal(popupEdit);
 });
 
 initialCards.forEach((element) => {
