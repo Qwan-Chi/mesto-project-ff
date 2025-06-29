@@ -49,14 +49,24 @@
               class="popup__input popup__input_type_name"
               placeholder="Имя"
               required
+              minlength="2"
+              maxlength="40"
             />
+            <span id="span__name-validation" class="popup__validation"
+              >не валид</span
+            >
             <input
               type="text"
               name="description"
               class="popup__input popup__input_type_description"
               placeholder="Занятие"
               required
+              minlength="2"
+              maxlength="200"
             />
+            <span id="span__description-validation" class="popup__validation"
+              >не валид</span
+            >
             <button type="submit" class="button popup__button">
               Сохранить
             </button>

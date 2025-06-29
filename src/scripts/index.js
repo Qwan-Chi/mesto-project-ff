@@ -2,6 +2,7 @@ import "../styles/index.css";
 import { openModal, closeModal } from "./modal";
 import { handleLikeClick, createCard, deleteCard } from "./card";
 import { initialCards } from "./cards";
+import { enableValidation, clearValidation } from "./validation";
 
 const profileForm = document.forms["edit-profile"];
 const nameInput = profileForm.elements.name;
@@ -15,6 +16,38 @@ const imagePopup = document.querySelector(".popup_type_image");
 const popupEdit = document.querySelector(".popup_type_edit");
 const placesList = document.querySelector(".places__list");
 const popupNewCard = document.querySelector(".popup_type_new-card");
+
+// формы
+// const formEditProfile = document.forms["edit-profile"];
+// const formEditProfileInputName = formEditProfile.elements["name"];
+// const formEditProfileInputDescription = formEditProfile.elements["description"];
+
+// const nameValidation = document.querySelector("#span__name-validation");
+// const descriptionValidation = document.querySelector(
+//   "#span__description-validation"
+// );
+
+const editProfileConfig = {
+  formSelector: 'form[name="edit-profile"]',
+  inputSelector: 'input[name="name"], input[name="description"]',
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  errorClass: "popup__validation_visible",
+};
+
+// Инициализация валидации
+enableValidation(editProfileConfig);
+
+// Пример использования clearValidation при открытии формы
+const editProfileForm = document.forms["edit-profile"];
+
+// Функция для вызова при открытии формы
+function openEditProfileForm() {
+  // Очистить все ошибки валидации
+  clearValidation(editProfileForm, editProfileConfig);
+
+  // Здесь может быть ваш код открытия попапа
+}
 
 function fillProfileForm() {
   nameInput.value = profileTitle.textContent;
@@ -84,3 +117,7 @@ initialCards.forEach((element) => {
     .querySelector(".places__list")
     .append(createCard(element, deleteCard, handleLikeClick, handleImageZoom));
 });
+
+formEditProfileInputName.addEventListener("input", (evt) =>
+  validProfile(formEditProfile, formEditProfileInputName, nameValidation)
+);

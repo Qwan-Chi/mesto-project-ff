@@ -1,0 +1,11 @@
+.popup__validation {
+  color: #ff0000;
+  font-size: 12px;
+  margin-top: 5px;
+  min-height: 16px;
+  display: none;
+}
+
+.popup__validation_visible {
+  display: block;
+}
