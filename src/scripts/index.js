@@ -4,73 +4,95 @@ import { handleLikeClick, createCard, deleteCard } from "./card";
 import { initialCards } from "./cards";
 import { enableValidation, clearValidation } from "./validation";
 
+const SELECTORS = {
+  profileForm: 'form[name="edit-profile"]',
+  cardForm: 'form[name="new-place"]',
+  editPopup: ".popup_type_edit",
+  newCardPopup: ".popup_type_new-card",
+  imagePopup: ".popup_type_image",
+  editButton: ".profile__edit-button",
+  addButton: ".profile__add-button",
+  closeButtons: ".popup__close",
+  profileTitle: ".profile__title",
+  profileDescription: ".profile__description",
+  placesList: ".places__list",
+};
+
+const VALIDATION_CONFIG = {
+  editProfile: {
+    formSelector: 'form[name="edit-profile"]',
+    inputSelector: 'input[name="name"], input[name="description"]',
+    submitButtonSelector: ".popup__button",
+    inactiveButtonClass: "popup__button_disabled",
+    errorClass: "popup__validation_visible",
+  },
+
+  newCard: {
+    formSelector: 'form[name="new-place"]',
+    inputSelector: 'input[name="place-name"], input[name="link"]',
+    submitButtonSelector: ".popup__button",
+    inactiveButtonClass: "popup__button_disabled",
+    errorClass: "popup__validation_visible",
+  },
+};
+
 const profileForm = document.forms["edit-profile"];
 const nameInput = profileForm.elements.name;
-const description = profileForm.elements.description;
+const descriptionInput = profileForm.elements.description;
+
 const cardForm = document.forms["new-place"];
 const cardNameInput = cardForm.elements["place-name"];
 const cardLinkInput = cardForm.elements.link;
-const profileTitle = document.querySelector(".profile__title");
-const profileDescription = document.querySelector(".profile__description");
-const imagePopup = document.querySelector(".popup_type_image");
-const popupEdit = document.querySelector(".popup_type_edit");
-const placesList = document.querySelector(".places__list");
-const popupNewCard = document.querySelector(".popup_type_new-card");
 
-// формы
-// const formEditProfile = document.forms["edit-profile"];
-// const formEditProfileInputName = formEditProfile.elements["name"];
-// const formEditProfileInputDescription = formEditProfile.elements["description"];
+const profileTitle = document.querySelector(SELECTORS.profileTitle);
+const profileDescription = document.querySelector(SELECTORS.profileDescription);
+const placesList = document.querySelector(SELECTORS.placesList);
 
-// const nameValidation = document.querySelector("#span__name-validation");
-// const descriptionValidation = document.querySelector(
-//   "#span__description-validation"
-// );
-
-const editProfileConfig = {
-  formSelector: 'form[name="edit-profile"]',
-  inputSelector: 'input[name="name"], input[name="description"]',
-  submitButtonSelector: ".popup__button",
-  inactiveButtonClass: "popup__button_disabled",
-  errorClass: "popup__validation_visible",
-};
-
-// Инициализация валидации
-enableValidation(editProfileConfig);
-
-// Пример использования clearValidation при открытии формы
-const editProfileForm = document.forms["edit-profile"];
-
-// Функция для вызова при открытии формы
-function openEditProfileForm() {
-  // Очистить все ошибки валидации
-  clearValidation(editProfileForm, editProfileConfig);
-
-  // Здесь может быть ваш код открытия попапа
-}
+const editPopup = document.querySelector(SELECTORS.editPopup);
+const newCardPopup = document.querySelector(SELECTORS.newCardPopup);
+const imagePopup = document.querySelector(SELECTORS.imagePopup);
 
 function fillProfileForm() {
   nameInput.value = profileTitle.textContent;
-  description.value = profileDescription.textContent;
+  descriptionInput.value = profileDescription.textContent;
 }
 
 function handleImageZoom(evt) {
   const image = evt.target;
-  imagePopup.querySelector(".popup__image").src = image.src;
-  imagePopup.querySelector(".popup__caption").textContent = image.alt;
+  const popupImage = imagePopup.querySelector(".popup__image");
+  const popupCaption = imagePopup.querySelector(".popup__caption");
+
+  popupImage.src = image.src;
+  popupImage.alt = image.alt;
+  popupCaption.textContent = image.alt;
+
   openModal(imagePopup);
 }
 
-profileForm.addEventListener("submit", (evt) => {
+function addNewCard(cardData) {
+  const newCardElement = createCard(
+    cardData,
+    deleteCard,
+    handleLikeClick,
+    handleImageZoom
+  );
+
+  placesList.prepend(newCardElement);
+}
+
+function updateProfile(name, description) {
+  profileTitle.textContent = name;
+  profileDescription.textContent = description;
+}
+
+function handleProfileFormSubmit(evt) {
   evt.preventDefault();
 
-  profileTitle.textContent = nameInput.value;
-  profileDescription.textContent = description.value;
+  updateProfile(nameInput.value, descriptionInput.value);
+  closeModal(editPopup);
+}
 
-  closeModal(popupEdit);
-});
-
-cardForm.addEventListener("submit", (evt) => {
+function handleCardFormSubmit(evt) {
   evt.preventDefault();
 
   const newCard = {
@@ -78,46 +100,69 @@ cardForm.addEventListener("submit", (evt) => {
     link: cardLinkInput.value,
   };
 
-  placesList.prepend(
-    createCard(newCard, deleteCard, handleLikeClick, handleImageZoom)
-  );
+  addNewCard(newCard);
+
   cardForm.reset();
-  closeModal(popupNewCard);
-});
+  clearValidation(cardForm, VALIDATION_CONFIG.newCard);
 
-document.querySelectorAll(".popup__close").forEach((button) => {
-  button.addEventListener("click", () => {
-    const popup = button.closest(".popup");
-    closeModal(popup);
-  });
-});
+  closeModal(newCardPopup);
+}
 
-document
-  .querySelector(".profile__edit-button")
-  .addEventListener("click", () => {
-    fillProfileForm();
-    openModal(popupEdit);
-  });
+function handleEditProfileClick() {
+  fillProfileForm();
+  clearValidation(profileForm, VALIDATION_CONFIG.editProfile);
+  openModal(editPopup);
+}
 
-document.querySelector(".profile__add-button").addEventListener("click", () => {
-  openModal(popupNewCard);
-});
+function handleAddCardClick() {
+  cardForm.reset();
+  clearValidation(cardForm, VALIDATION_CONFIG.newCard);
+  openModal(newCardPopup);
+}
 
-profileForm.addEventListener("submit", (evt) => {
-  evt.preventDefault();
+function handleCloseClick(evt) {
+  const popup = evt.target.closest(".popup");
+  closeModal(popup);
+}
 
-  profileTitle.textContent = nameInput.value;
-  profileDescription.textContent = description.value;
+function setEventListeners() {
+  profileForm.addEventListener("submit", handleProfileFormSubmit);
+  cardForm.addEventListener("submit", handleCardFormSubmit);
 
-  closeModal(popupEdit);
-});
-
-initialCards.forEach((element) => {
   document
-    .querySelector(".places__list")
-    .append(createCard(element, deleteCard, handleLikeClick, handleImageZoom));
-});
+    .querySelector(SELECTORS.editButton)
+    .addEventListener("click", handleEditProfileClick);
 
-formEditProfileInputName.addEventListener("input", (evt) =>
-  validProfile(formEditProfile, formEditProfileInputName, nameValidation)
-);
+  document
+    .querySelector(SELECTORS.addButton)
+    .addEventListener("click", handleAddCardClick);
+
+  document.querySelectorAll(SELECTORS.closeButtons).forEach((button) => {
+    button.addEventListener("click", handleCloseClick);
+  });
+}
+
+function initValidation() {
+  enableValidation(VALIDATION_CONFIG.editProfile);
+  enableValidation(VALIDATION_CONFIG.newCard);
+}
+
+function initCards() {
+  initialCards.forEach((cardData) => {
+    const cardElement = createCard(
+      cardData,
+      deleteCard,
+      handleLikeClick,
+      handleImageZoom
+    );
+    placesList.append(cardElement);
+  });
+}
+
+function init() {
+  initValidation();
+  setEventListeners();
+  initCards();
+}
+
+init();

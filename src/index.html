@@ -83,8 +83,15 @@
               name="place-name"
               class="popup__input popup__input_type_card-name"
               placeholder="Название"
+              minlength="2"
+              maxlength="30"
               required
             />
+            <span
+              id="span__place-name-validation"
+              class="popup__validation"
+            ></span>
+
             <input
               type="url"
               name="link"
@@ -92,6 +99,8 @@
               placeholder="Ссылка на картинку"
               required
             />
+            <span id="span__link-validation" class="popup__validation"></span>
+
             <button type="submit" class="button popup__button">
               Сохранить
             </button>
