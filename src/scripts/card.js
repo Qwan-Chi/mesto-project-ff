@@ -8,17 +8,16 @@ export function createCard(cardData, userId, deleteCallback, likeHandler, zoomHa
   const deleteButton = cardElement.querySelector(".card__delete-button");
   const likeButton = cardElement.querySelector(".card__like-button");
   const likeCounter = cardElement.querySelector(".card__like-counter");
+  const card = cardElement.querySelector(".card");
 
   cardImage.src = cardData.link;
   cardImage.alt = cardData.name;
   cardTitle.textContent = cardData.name;
 
-  // Отображение количества лайков
   if (likeCounter) {
     likeCounter.textContent = cardData.likes ? cardData.likes.length : 0;
   }
 
-  // Проверка, лайкнул ли текущий пользователь карточку
   if (cardData.likes && userId) {
     const isLiked = cardData.likes.some((like) => like._id === userId);
     if (isLiked) {
@@ -26,22 +25,19 @@ export function createCard(cardData, userId, deleteCallback, likeHandler, zoomHa
     }
   }
 
-  // Показывать кнопку удаления только для собственных карточек
   if (deleteButton) {
     if (cardData.owner && cardData.owner._id === userId) {
       deleteButton.style.display = "block";
-      deleteButton.addEventListener("click", () => deleteCallback(cardData, cardElement.querySelector(".card")));
+      deleteButton.addEventListener("click", () => deleteCallback(cardData, card));
     } else {
       deleteButton.style.display = "none";
     }
   }
 
-  // Обработчик лайка
   if (likeButton) {
     likeButton.addEventListener("click", () => likeHandler(cardData, likeButton, likeCounter));
   }
 
-  // Обработчик увеличения изображения
   if (cardImage) {
     cardImage.addEventListener("click", zoomHandler);
   }

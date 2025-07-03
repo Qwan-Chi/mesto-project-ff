@@ -13,7 +13,6 @@ const checkResponse = (res) => {
   return Promise.reject(`Ошибка: ${res.status}`);
 };
 
-// Получение информации о пользователе
 export const getUserInfo = () => {
   return fetch(`${API_CONFIG.baseUrl}/users/me`, {
     headers: {
@@ -22,7 +21,6 @@ export const getUserInfo = () => {
   }).then(checkResponse);
 };
 
-// Получение карточек с сервера
 export const getInitialCards = () => {
   return fetch(`${API_CONFIG.baseUrl}/cards`, {
     headers: {
@@ -31,7 +29,6 @@ export const getInitialCards = () => {
   }).then(checkResponse);
 };
 
-// Обновление информации профиля
 export const updateUserInfo = (name, about) => {
   return fetch(`${API_CONFIG.baseUrl}/users/me`, {
     method: "PATCH",
@@ -43,7 +40,6 @@ export const updateUserInfo = (name, about) => {
   }).then(checkResponse);
 };
 
-// Добавление новой карточки
 export const addCard = (name, link) => {
   return fetch(`${API_CONFIG.baseUrl}/cards`, {
     method: "POST",
@@ -55,7 +51,6 @@ export const addCard = (name, link) => {
   }).then(checkResponse);
 };
 
-// Удаление карточки
 export const deleteCard = (cardId) => {
   return fetch(`${API_CONFIG.baseUrl}/cards/${cardId}`, {
     method: "DELETE",
@@ -65,7 +60,6 @@ export const deleteCard = (cardId) => {
   }).then(checkResponse);
 };
 
-// Постановка лайка
 export const likeCard = (cardId) => {
   return fetch(`${API_CONFIG.baseUrl}/cards/likes/${cardId}`, {
     method: "PUT",
@@ -75,7 +69,6 @@ export const likeCard = (cardId) => {
   }).then(checkResponse);
 };
 
-// Снятие лайка
 export const unlikeCard = (cardId) => {
   return fetch(`${API_CONFIG.baseUrl}/cards/likes/${cardId}`, {
     method: "DELETE",
@@ -85,7 +78,6 @@ export const unlikeCard = (cardId) => {
   }).then(checkResponse);
 };
 
-// Обновление аватара пользователя
 export const updateUserAvatar = (avatar) => {
   return fetch(`${API_CONFIG.baseUrl}/users/me/avatar`, {
     method: "PATCH",
