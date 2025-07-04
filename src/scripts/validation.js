@@ -1,11 +1,3 @@
-const VALIDATION_PATTERNS = {
-  placeName: /^[a-zA-Zа-яА-ЯёЁ\s\-]+$/,
-};
-
-const ERROR_MESSAGES = {
-  placeName:
-    "Название может содержать только латинские и кириллические буквы, знаки дефиса и пробелы",
-};
 
 function getErrorElement(input) {
   const inputName = input.getAttribute("name");
@@ -17,12 +9,6 @@ function getErrorElement(input) {
   return document.querySelector(`#span__${inputName}-validation`);
 }
 
-function validatePlaceName(input) {
-  if (!VALIDATION_PATTERNS.placeName.test(input.value)) {
-    return ERROR_MESSAGES.placeName;
-  }
-  return "";
-}
 
 function hasInvalidInput(inputs) {
   return inputs.some((input) => !input.validity.valid);
@@ -59,16 +45,10 @@ function checkInputValidity(form, input, config) {
   let errorMessage = "";
 
   if (!input.validity.valid) {
-    errorMessage = input.validationMessage;
-  }
-
-  if (input.name === "place-name" && input.value.trim() !== "") {
-    const customError = validatePlaceName(input);
-    if (customError) {
-      errorMessage = customError;
-      input.setCustomValidity(customError);
+    if (input.validity.patternMismatch && input.dataset.errorMessage) {
+      errorMessage = input.dataset.errorMessage;
     } else {
-      input.setCustomValidity("");
+      errorMessage = input.validationMessage;
     }
   }
 
@@ -118,8 +98,6 @@ function clearValidation(form, config) {
   const button = form.querySelector(config.submitButtonSelector);
 
   inputs.forEach((input) => {
-    input.setCustomValidity("");
-
     const errorElement = getErrorElement(input);
     if (errorElement) {
       hideInputError(input, errorElement, config);

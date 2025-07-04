@@ -51,10 +51,10 @@
               required
               minlength="2"
               maxlength="40"
+              pattern="[a-zA-Zа-яА-ЯёЁ\s\-]+"
+              data-error-message="Имя может содержать только латинские и кириллические буквы, знаки дефиса и пробелы"
             />
-            <span id="span__name-validation" class="popup__validation"
-              >не валид</span
-            >
+            <span id="span__name-validation" class="popup__validation"></span>
             <input
               type="text"
               name="description"
@@ -63,10 +63,13 @@
               required
               minlength="2"
               maxlength="200"
+              pattern="[a-zA-Zа-яА-ЯёЁ\s\-]+"
+              data-error-message="Занятие может содержать только латинские и кириллические буквы, знаки дефиса и пробелы"
             />
-            <span id="span__description-validation" class="popup__validation"
-              >не валид</span
-            >
+            <span
+              id="span__description-validation"
+              class="popup__validation"
+            ></span>
             <button type="submit" class="button popup__button">
               Сохранить
             </button>
@@ -85,6 +88,8 @@
               placeholder="Название"
               minlength="2"
               maxlength="30"
+              pattern="[a-zA-Zа-яА-ЯёЁ\s\-]+"
+              data-error-message="Название может содержать только латинские и кириллические буквы, знаки дефиса и пробелы"
               required
             />
             <span

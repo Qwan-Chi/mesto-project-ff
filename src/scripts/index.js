@@ -190,13 +190,13 @@ function handleImageZoom(evt) {
 }
 
 function createCardElement(cardData) {
-  return createCard(
+  return createCard({
     cardData,
-    currentUser._id,
-    handleDeleteClick,
-    handleLikeToggle,
-    handleImageZoom
-  );
+    userId: currentUser._id,
+    deleteCallback: handleDeleteClick,
+    likeHandler: handleLikeToggle,
+    zoomHandler: handleImageZoom
+  });
 }
 
 function handleLikeToggle(cardData, likeButton, likeCounter) {
